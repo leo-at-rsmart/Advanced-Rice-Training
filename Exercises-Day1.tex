@@ -1,4 +1,6 @@
-\part{Day 1}
+\addcontentsline{toc}{part}{Day 1: Introductions and Overview of Rice Basics}
+\part*{Day 1\\
+Introductions and Overview of Rice Basics}
 %% \phantomsection
 \addcontentsline{toc}{section}{Advanced Rice Customization Patterns}
 {\setlength{\baselineskip}%
@@ -45,7 +47,34 @@ Create a new directory in \emph{rice-src} called \emph{training}
   mkdir -p src/main/webapp/
 \end{lstlisting}
 
-\subsection*{1.4 Create a pom.xml for the new Module}
+\subsection*{1.4 Create a pom.xml for the New Module}
+\subsubsection*{1.4.1 Stub out training/pom.xml}
+\begin{lstlisting}[language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <name>Advanced Rice Training</name>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.kuali.rice</groupId>
+    <artifactId>rice</artifactId>
+    <version>1.0.3</version>
+  </parent>
+  <artifactId>training</artifactId>
+</project>
+\end{lstlisting}
+
+\subsubsection*{1.4.1 Add Basic Dependencies}
+\begin{lstlisting}[language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+  <dependencies>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rice-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+  </dependencies>  
+\end{lstlisting}
+
 
 \subsection*{1.5 Add a Base Package}
 %% eclipse screenshot here
@@ -388,8 +417,10 @@ access your constants from the JSP/JSTL.
   \section*{\flushright Exercise 2\\Portal Customization}
   \hrulefill \par}
 
+\addcontentsline{toc}{subsection}{Description}
 \subsection*{Description}
 
+\addcontentsline{toc}{subsection}{Goals}
 \subsection*{Goals}
 \begin{itemize}
   \item Learn new ways to use javascript to communicate with SOA 
@@ -397,6 +428,11 @@ access your constants from the JSP/JSTL.
     design to the Kuali Portal
 \end{itemize}
 
+\addcontentsline{toc}{subsection}{Goals}
+\subsection*{1 Add a New Tab Restricted by Permission}
+
+\addcontentsline{toc}{subsection}{Goals}
+\subsection*{2 Add Tooltips to Channels}
 
 \newpage
   {\setlength{\baselineskip}%
