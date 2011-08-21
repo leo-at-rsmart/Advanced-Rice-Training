@@ -1,0 +1,224 @@
+\part{Day 1}
+%% \phantomsection
+\addcontentsline{toc}{section}{Advanced Rice Customization Patterns}
+{\setlength{\baselineskip}%
+  {0.0\baselineskip}
+  \section*{\flushright Exercise 1\\Advanced Rice Customization Patterns}
+  \hrulefill \par}
+
+\addcontentsline{toc}{subsection}{Description}
+\subsection*{Description}
+
+\addcontentsline{toc}{subsection}{Goals}
+\subsection*{Goals}
+\begin{itemize}
+  \item Create a custom module.
+  \item Create a custom DD Control class.
+  \item See interesting ways to customize the portal.
+  \item Create a custom JSP/JSTL function.
+  \item Create a custom JstlListener and see how that works.
+  \item Create custom parameters for your application-config.xml
+    configuration
+  \item Add an extension to a business object
+\end{itemize}
+
+\addcontentsline{toc}{subsection}{Creating a Custom Module}
+\subsection*{1 Creating a Custom Module}
+
+\subsection*{1.1 Browse the Rice Source Project}
+
+\subsection*{1.2 Create a New Directory}
+%% eclipse screenshot here
+Create a new directory in \emph{rice-src} called \emph{training}
+\begin{lstlisting}[language=bash,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
+    users},frame=single,breaklines=true]
+  mkdir training
+\end{lstlisting}
+
+\subsection*{1.3 Add the Standard Structure}
+%% eclipse screenshot here
+\begin{lstlisting}[language=bash,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
+    users},frame=single,breaklines=true]
+  mkdir -p src/main/java/
+  mkdir -p src/main/resources/
+  mkdir -p src/main/config/
+  mkdir -p src/main/webapp/
+\end{lstlisting}
+
+\subsection*{1.4 Create a pom.xml for the new Module}
+
+\subsection*{1.5 Add a Base Package}
+%% eclipse screenshot here
+
+\subsection*{1.6 Create Base Spring Beans}
+\subsubsection*{1.6.1 Stub out
+  src/main/resources/training/SpringModuleBeans.xml}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Base
+  SpringModuleBeans.xml},frame=single,breaklines=true]
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+</beans>
+\end{lstlisting}
+
+\subsubsection*{1.6.1 Add the module bean with a parent}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Base
+  SpringBeans.xml},frame=single,breaklines=true]
+
+  <bean id="bookstoreModuleCconfiguration"
+    parent="bookstoreModuleConfiguration-parentBean" />
+
+  <bean id="bookstoreModuleConfiguration-parentBean" abstract="true"
+     class="org.kuali.rice.kns.bo.ModuleConfiguration">
+    <property name="namespaceCode" value="bookstore"/>
+    <property name="initializeDataDictionary" value="true"/>
+    <property name="dataDictionaryPackages">
+      <list>
+        <value>classpath:train/bookstore/bo/datadictionary/</value>
+      </list>
+    </property>
+    <property name="databaseRepositoryFilePaths">
+      <list>
+	    <value>OJB-repository-bookstore.xml</value>
+      </list>
+    </property>
+    <property name="packagePrefixes">
+      <list>
+        <value>train.bookstore.bo</value>
+      </list>
+    </property>
+  </bean>
+\end{lstlisting}
+
+\subsubsection*{1.6.1 Add Spring datasource Configuration}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Spring
+    datasource setup},frame=single,breaklines=true]
+  <bean id="trainingDatasource" class="org.kuali.rice.core.database.PrimaryDataSourceFactoryBean" lazy-init="true">
+    <property name="preferredDataSourceParams">
+      <list>
+        <value>training.datasource</value>
+      </list>
+    </property>
+    <property name="preferredDataSourceJndiParams">
+      <list>
+        <value>training.datasource.jndi.location</value>
+      </list>
+    </property>
+    <property name="serverDataSource" value="false"/>
+  </bean>
+
+  <bean id="trainingOjbConfigurer" class="org.kuali.rice.core.ojb.BaseOjbConfigurer">
+    <property name="jcdAliases">
+      <list>
+        <value>trainingDataSource</value>
+      </list>
+    </property>
+    <property name="metadataLocation" value="classpath:training/OJB-repository-bookstore.xml" />
+  </bean>
+\end{lstlisting}
+
+\subsubsection*{1.6.1 Setup platformAwareDao}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Spring
+    datasource setup src/main/resources/training/OJB-repository-bookstore.xml},frame=single,breaklines=true]
+  <bean id="platformAwareDao" abstract="true" class="org.kuali.rice.kns.dao.impl.PlatformAwareDaoBaseOjb">
+    <property name="jcdAlias" value="trainingDataSource" />
+    <property name="dbPlatform" ref="dbPlatform" />
+  </bean>
+\end{lstlisting}
+
+\subsection*{1.7 Stub Base OJB Mapping}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Stubbed
+  OJB Descriptor file src/main/resources/OJB-repository-training.xml},frame=single,breaklines=true]
+<descriptor-repository version="1.0">
+
+  <jdbc-connection-descriptor jcd-alias="trainingDataSource" default-connection="false" jdbc-level="3.0" eager-release="false" batch-mode="false"
+      useAutoCommit="0" ignoreAutoCommitExceptions="false">
+    <sequence-manager className="org.kuali.rice.core.ojb.ConfigurableSequenceManager">
+      <attribute attribute-name="property.prefix" attribute-value="datasource.ojb.sequenceManager" />
+    </sequence-manager>
+    <object-cache class="org.apache.ojb.broker.cache.ObjectCachePerBrokerImpl" />
+  </jdbc-connection-descriptor>
+</descriptor>
+\end{lstlisting}
+
+\addcontentsline{toc}{subsection}{Creating a Custom Data Dictionary Control}
+\subsection*{2 Creating a Custom Data Dictionary Control}
+Control definitions are just Spring beans accessed via the
+BusinessObjectMetadataService and the DataDictionaryService. Besides
+controls, you can create or extend any aspect of the DataDictionary
+including relationships, lookup definitions, and the workflow
+attributes.
+
+The core DataDictionary classes are located in
+\emph{impl/src/main/java/org/kuali/rice/kns/datadictionary/} of your
+rice source code distribution.
+%% Show eclipse screenshot here
+
+\subsubsection*{2.1 Add a datadictionary Package to Our Module}
+%% Add an eclipse screenshot
+
+\begin{lstlisting}[language=bash,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
+    users},frame=single,breaklines=true]
+  mkdir -p training/src/main/java/training/datadictionary/control
+\end{lstlisting}
+
+\subsubsection*{2.2 Stub SuggestsBox Control in src/main/java/training/datadictionary/control}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={Stubbed
+  OJB Descriptor file src/main/resources/OJB-repository-training.xml},frame=single,breaklines=true]
+package training.datadictionary.control;
+
+/**
+ *
+ */
+public class SuggestsBoxDefinition extends ControlDefinitionBase {
+    private static final long serialVersionUID = -1L;
+
+	public SuggestsBoxDefinition() {
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return "SuggestsBoxDefinition";
+    }
+}
+\end{lstlisting}
+
+\addcontentsline{toc}{subsection}{Creating a Custom JSTL Function}
+\subsection*{3 Creating a Custom JSTL Function}
+\subsubsection*{3.1 Add a web Package to Our Module}
+%% Add an eclipse screenshot
+
+\begin{lstlisting}[language=bash,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
+    users},frame=single,breaklines=true]
+  mkdir -p training/src/main/java/training/web/
+\end{lstlisting}
+
+
+
+{\setlength{\baselineskip}%
+  {0.0\baselineskip}
+  \section*{\flushright Exercise 2\\Portal Customization}
+  \hrulefill \par}
+
+\subsection*{Description}
+
+\subsection*{Goals}
+\begin{itemize}
+  \item Learn new ways to use javascript to communicate with SOA 
+  \item How to creatively add functionality and rich user interface
+    design to the Kuali Portal
+\end{itemize}
+
+
+\newpage
+  {\setlength{\baselineskip}%
+           {0.0\baselineskip}
+  \section*{Notes}
+  \hrulefill \par}
+

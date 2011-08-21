@@ -1,0 +1,37 @@
+\documentclass[letterpaper,notitlepage,12pt]{book}
+\author{Leo Przybylski}
+\usepackage{graphicx}
+\usepackage{titlepic}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=ForestGreen,
+    filecolor=ForestGreen,
+    linkcolor=ForestGreen,
+    urlcolor=ForestGreen
+}
+%%\hypersetup{linktocpage}
+\definecolor{ubergray}{RGB}{245,245,245}
+\title{\includegraphics[width=\textwidth]{cover.eps}\\Advanced Rice Training Exercises}
+\date{}
+\pagestyle{fancy}
+\fancyhead{} % Clear all header fields 
+\fancyhead[L]{\sectionmark}
+\fancyhead[R]{\includegraphics[height=26pt]{heading.eps}}% 
+\fancyfoot{} % Clear all footer fields 
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{Exercises-Day1.tex}
+
+\input{Exercises-Day2.tex}
+\input{Exercises-Day3.tex}
+\input{Exercises-Day4.tex}
+\input{Exercises-Day5.tex}
+
+\end{document}
