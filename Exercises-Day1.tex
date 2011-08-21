@@ -145,6 +145,10 @@ Create a new directory in \emph{rice-src} called \emph{training}
 </descriptor>
 \end{lstlisting}
 
+\subsection*{1.8 Stub Module struts-config.xml}
+
+\subsection*{1.9 Add struts-config.xml to Rice Project web.xml}
+
 \addcontentsline{toc}{subsection}{Creating a Custom Data Dictionary Control}
 \subsection*{2 Creating a Custom Data Dictionary Control}
 Control definitions are just Spring beans accessed via the
@@ -199,7 +203,185 @@ public class SuggestsBoxDefinition extends ControlDefinitionBase {
   mkdir -p training/src/main/java/training/web/
 \end{lstlisting}
 
+\subsubsection*{3.2 Stub a TrainingFunctions Class in the web
+  Package}
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={training/web/TrainingFunctions},frame=single,breaklines=true]
+package training.web;
 
+/**
+ * Full of static methods for JSTL function access.
+ * 
+ */
+public final class TrainingFunctions {
+}
+\end{lstlisting}
+
+\subsubsection*{3.2 Add a Method that Fetches System Parameters}
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={training/web/TrainingFunctions},frame=single,breaklines=true]
+...
+...
+import static org.kuali.rice.kns.service.KNSServiceLocator.getParameterService
+
+public final static boolean paramExists(final String component, final String
+name) {
+    return getParameterService().parameterExists("KR-TRN", component, name);
+}
+
+public final static String getParameter(final String component, final String
+name) {
+    return getParameterService().getParameterValue("KR-TRN", component, name);
+}
+
+public final static List<String> getParameters(final String component, final String
+name) {
+    return getParameterService().getParameterValues("KR-TRN", component, name);
+}
+
+public final static boolean isEnabled(final String component, final String
+name) {
+    return getParameterService().getIndicatorParameter("KR-TRN", component, name);
+}
+\end{lstlisting}
+
+\subsubsection*{3.3 Stub a Tag Library Definition for the Module}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={src/main/webapp/WEB-INF/tlds/trnfunc.tld
+  Tag Library Definition},frame=single,breaklines=true]
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd" version="2.0">
+</taglib>
+\end{lstlisting}
+
+\subsubsection*{3.4 Define the Tag Library}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={src/main/webapp/WEB-INF/tlds/trnfunc.tld
+  Tag Library Definition},frame=single,breaklines=true]
+    <description>Training functions library</description>
+    <display-name>Training functions</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>fn</short-name>
+    <uri>http://www.kuali.org/jsp/jstl/functions</uri>
+\end{lstlisting}
+
+\subsubsection*{3.5 Add the Functions from TrainingFunctions}
+\begin{lstlisting}[language=xml,backgroundcolor=\color{ubergray},caption={src/main/webapp/WEB-INF/tlds/trnfunc.tld
+  Tag Library Definition},frame=single,breaklines=true]
+    <function>
+        <description>Access System Parameters from JSTL</description>
+        <name>parameterExists</name>
+        <function-class>training.web.TrainingFunctions</function-class>
+        <function-signature>boolean parameterExists(java.lang.String, java.lang.String)</function-signature>
+        <example>&lt;c:if
+        test="${trn-fn:parameterExists('Document', 'ACTIVE_FILE_TYPES')}"&gt;&lt;/c:if&gt;</example>
+    </function>
+
+    <function>
+        <description>Access System Parameters from JSTL</description>
+        <name>getParameter</name>
+        <function-class>training.web.TrainingFunctions</function-class>
+        <function-signature>java.lang.String getParameter(java.lang.String, java.lang.String)</function-signature>
+        <example>${trn-fn:getParameter('Document', 'ACTIVE_FILE_TYPES')}</example>
+    </function>
+
+    <function>
+        <description>Access System Parameters from JSTL</description>
+        <name>getParameters</name>
+        <function-class>training.web.TrainingFunctions</function-class>
+        <function-signature>java.util.List getParameters(java.lang.String, java.lang.String)</function-signature>
+        <example>${trn-fn:getParameters('Document', 'ACTIVE_FILE_TYPES')}</example>
+    </function>
+
+    <function>
+        <description>Access System Parameters from JSTL</description>
+        <name>isEnabled</name>
+        <function-class>training.web.TrainingFunctions</function-class>
+        <function-signature>boolean isEnabled(java.lang.String, java.lang.String)</function-signature>
+        <example>${trn-fn:isEnabled('Document', 'ALLOW_NEGATIVE_BALANCE_IND')}</example>
+    </function>
+\end{lstlisting}
+
+\subsubsection*{3.6 Test Yourself: What have you learned?}
+Using the same examples above, add a call to \emph{hasPermission} that
+you can use to restrict a tab in the portal specifically for FO's.
+
+\addcontentsline{toc}{subsection}{Creating a Custom JSTL Function}
+\subsection*{3 Adding to JstlConstantsInitListener}
+JstlConstantsInitListener can be found in
+\emph{impl/src/main/java/org/kuali/rice/kns/web/listener/JstlConstantsInitListener.java}
+of your rice source distribution.
+%% Eclipse screenshot here
+
+\subsubsection*{3.1 Add a listener Package to Our Module}
+%% Add an eclipse screenshot
+
+\begin{lstlisting}[language=bash,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
+    users},frame=single,breaklines=true]
+  mkdir -p training/src/main/java/training/web/listener
+\end{lstlisting}
+
+\subsubsection*{3.1 Stub out a ContextListener}
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={training/web/TrainingFunctions},frame=single,breaklines=true]
+package training.web.listener;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+
+/**
+ * This class is the JstlContants implementation of the ServletContextListener.
+ */
+public class JstlConstantsInitListener implements ServletContextListener {
+}
+\end{lstlisting}
+
+
+\subsubsection*{3.1 Add a Constant}
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={training/web/TrainingFunctions},frame=single,breaklines=true]
+package training;
+
+
+import org.kuali.rice.core.util.JSTLConstants;
+
+public class TrainingConstants extends JSTLConstants {
+  public static String CURRENT_PROCESS_DATE_PARAMETER = "CURRENT_PROCESS_DATE";
+}
+\end{lstlisting}
+
+\subsubsection*{3.1 Add Constants to the Listener}
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={training/web/TrainingFunctions},frame=single,breaklines=true]
+    import training.TrainingConstants;
+    ...
+    ...
+    public void contextInitialized(ServletContextEvent sce) {
+
+        ServletContext context = sce.getServletContext();
+        // publish application constants into JSP app context with name "Constants"
+        context.setAttribute("TrainingConstants", new TrainingConstants());
+    }
+\end{lstlisting}
+
+\subsubsection*{3.1 Add the New InitListener to the web.xml}
+The listener needs to be added to the Rice web.xml file. There is only
+one web.xml file for an application. Each rice project has one. It
+will be located in your project source tree at
+src/main/webapp/WEB-INF/
+%% Show Eclipse screenshot
+ 
+In it, you will see a section with listeners that looks like:
+\begin{lstlisting}[language=java,backgroundcolor=\color{ubergray},caption={src/main/webapp/WEB-INF/web.xml},frame=single,breaklines=true]
+    <listener>
+      <listener-class>org.kuali.rice.core.web.listener.StandaloneInitializeListener</listener-class>
+    </listener>
+
+    <listener>
+      <listener-class>org.kuali.rice.kns.web.listener.JstlConstantsInitListener</listener-class>
+    </listener>
+
+    <listener>
+      <listener-class>org.kuali.rice.kns.web.listener.KualiHttpSessionListener</listener-class>
+    </listener>
+\end{lstlisting}
+
+Just add yours. Now when your application starts, you will be able to
+access your constants from the JSP/JSTL.
 
 {\setlength{\baselineskip}%
   {0.0\baselineskip}

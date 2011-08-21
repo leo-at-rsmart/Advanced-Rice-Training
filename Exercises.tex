@@ -19,13 +19,20 @@
 \date{}
 \pagestyle{fancy}
 \fancyhead{} % Clear all header fields 
-\fancyhead[L]{\sectionmark}
-\fancyhead[R]{\includegraphics[height=26pt]{heading.eps}}% 
+\fancyhead[OL]{\sectionmark}
+\fancyhead[OR]{\includegraphics[height=26pt]{heading.eps}}% 
+\fancyhead[ER]{\sectionmark}
+\fancyhead[EL]{\includegraphics[height=26pt]{heading.eps}}% 
 \fancyfoot{} % Clear all footer fields 
 
 \begin{document}
 \maketitle
 \tableofcontents
+\part*{Preface}
+\section{Copyright}
+\section{About the Author}
+\section{Using these Exercises}
+\section{Training Overview}
 
 \input{Exercises-Day1.tex}
 
