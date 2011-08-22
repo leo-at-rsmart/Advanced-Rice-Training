@@ -2,7 +2,7 @@
 \part*{Day 1\\
 Introductions and Overview of Rice Basics}
 %% \phantomsection
-\addcontentsline{toc}{section}{Advanced Rice Customization Patterns}
+\addcontentsline{toc}{section}{Exercise 1: Advanced Rice Customization Patterns}
 {\setlength{\baselineskip}%
   {0.0\baselineskip}
   \section*{\flushright Exercise 1\\Advanced Rice Customization Patterns}
@@ -10,7 +10,14 @@ Introductions and Overview of Rice Basics}
 
 \addcontentsline{toc}{subsection}{Description}
 \subsection*{Description}
-
+This exercise is designed to help developers explore different
+patterns within Kuali Rice for development. There are many different
+areas for customization within Rice itself. There are also just as
+many different ways of doing the same thing. This can be confusing,
+daunting, and troublesome. In this exercise, I will explore some
+preferred methods for some advanced level customizations like creating
+your own module within Rice or adding your own Constants to be
+accessed from the webapp.
 \addcontentsline{toc}{subsection}{Goals}
 \subsection*{Goals}
 \begin{itemize}
@@ -30,26 +37,96 @@ Introductions and Overview of Rice Basics}
 \subsection*{1.1 Browse the Rice Source Project}
 
 \subsection*{1.2 Create a New Directory}
-%% eclipse screenshot here
+\includegraphics[width=\textwidth]{images/Screenshot.png}
+
 Create a new directory in \emph{rice-src} called \emph{training}
 \begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Directory
     creation for Linux users},frame=single,breaklines=true]
-  mkdir training
+mkdir training
 \end{lstlisting}
+In Eclipse, Refresh your project.
 
 \subsection*{1.3 Add the Standard Structure}
+\subsubsection*{1.3.1 Create Directories}
 %% eclipse screenshot here
 \begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Directory creation for Linux
     users},frame=single,breaklines=true]
-  mkdir -p src/main/java/
-  mkdir -p src/main/resources/
-  mkdir -p src/main/config/
-  mkdir -p src/main/webapp/
+mkdir -p src/main/java/
+mkdir -p src/main/resources/
+mkdir -p src/main/config/
+mkdir -p src/main/webapp/
+mkdir -p src/test/java/
+mkdir -p src/test/resources/
 \end{lstlisting}
+In Eclipse, Refresh your project.
+
+\subsubsection*{1.3.1 Setup the Build Path}
+In Eclipse:
+\begin{enumerate}
+  \item Expand the training folder
+  \item Expand the src folder
+  \item Expand the main folder
+  \item Click your right mouse button on the java folder. A
+    context menu will appear.
+  \item Go to \textbf{Build Path} $\rightarrow$ \textbf{Use as Source
+      Folder}
+  \item Click your right mouse button on the resources folder. A
+    context menu will appear.
+  \item Go to \textbf{Build Path} $\rightarrow$ \textbf{Use as Source
+      Folder}
+  \item Expand the test folder
+  \item Click your right mouse button on the test/java folder. A
+    context menu will appear.
+  \item Go to \textbf{Build Path} $\rightarrow$ \textbf{Use as Source
+      Folder}
+  \item Click your right mouse button on the test/resources folder. A
+    context menu will appear.
+  \item Go to \textbf{Build Path} $\rightarrow$ \textbf{Use as Source
+      Folder}
+  \item Click your right mouse button on the training folder. A
+    context menu will appear.
+  \item Go to \textbf{Build Path} $\rightarrow$ \textbf{Configure Build
+      Path}
+  \item A dialog will appear.\\
+    \noindent \includegraphics[width=\textwidth]{images/Screenshot3.png}
+  \item Click on the \textbf{Source} tab.
+  \item Locate rice-1.0.3/training build path configuration by scrolling
+  \item Expand \textbf{training/src/main/java}
+  \item Double-click on \textbf{Default output folder} next to the
+    \textbf{Output Folder:}
+  \item A dialog will appear.\\
+    \includegraphics[width=\textwidth]{images/Screenshot4.png}
+
+  \item Toggle \textbf{Specific output folder (path relative to
+      'rice-1.0.3').}
+  \item Enter \textbf{target/classes}
+  \item Expand \textbf{training/src/main/resources}
+  \item Double-click on \textbf{Default output folder} next to the
+    \textbf{Output Folder:}
+  \item A dialog will appear.
+  \item Toggle \textbf{Specific output folder (path relative to
+      'rice-1.0.3').}
+  \item Enter \textbf{target/classes}
+  \item Expand \textbf{training/src/test/java}
+  \item Double-click on \textbf{Default output folder} next to the
+    \textbf{Output Folder:}
+  \item A dialog will appear.
+  \item Toggle \textbf{Specific output folder (path relative to
+      'rice-1.0.3').}
+  \item Enter \textbf{target/test-classes}
+  \item Expand \textbf{training/src/test/resources}
+  \item Double-click on \textbf{Default output folder} next to the
+    \textbf{Output Folder:}
+  \item A dialog will appear.
+  \item Toggle \textbf{Specific output folder (path relative to
+      'rice-1.0.3').}
+  \item Enter \textbf{target/test-classes}
+\end{enumerate}
+
 
 \subsection*{1.4 Create a pom.xml for the New Module}
 \subsubsection*{1.4.1 Stub out training/pom.xml}
-\begin{lstlisting}[language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <name>Advanced Rice Training</name>
   <modelVersion>4.0.0</modelVersion>
@@ -59,11 +136,12 @@ Create a new directory in \emph{rice-src} called \emph{training}
     <version>1.0.3</version>
   </parent>
   <artifactId>training</artifactId>
+  <packaging>war</packaging>
 </project>
 \end{lstlisting}
 
 \subsubsection*{1.4.1 Add Basic Dependencies}
-\begin{lstlisting}[language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
   <dependencies>
 
     <dependency>
@@ -75,9 +153,192 @@ Create a new directory in \emph{rice-src} called \emph{training}
   </dependencies>  
 \end{lstlisting}
 
+\subsubsection*{1.4.2 Add the Maven Overlay Plugin}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>org.kuali.rice</groupId>
+              <artifactId>rice-web</artifactId>
+            </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+\end{lstlisting}
+
+\subsubsection*{1.4.2 Add the Dependency to rice-web}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rice-web</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jstl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jsp-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rice-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jstl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jsp-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+\end{lstlisting}
+
+\subsubsection*{1.4.3 Add the Tomcat Maven Plugin}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>tomcat-maven-plugin</artifactId>
+        <!-- tomcat 6.0.26 -->
+        <version>1.0</version>
+        <configuration>
+          <path>\$\{default.context.path\}</path>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>\$\{mysql.version\}</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+\end{lstlisting}
+
+\subsubsection*{1.4.4 Add the Jetty Maven Plugin}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty.version}</version>
+        <configuration>
+          <webAppConfig>
+            <contextPath>${default.context.path}</contextPath>
+          </webAppConfig>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>\$\{mysql.version\}</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>					
+\end{lstlisting}
+
+\subsubsection*{1.4.5 Add the Maven Properties}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true
+]
+  <properties>
+    <build.environment>dev</build.environment>
+    <default.context.path>/\$\{project.artifactId\}--\${build.environment\}</default.context.path>
+    <jetty.plugin.version>7.4.5.v20110725</jetty.plugin.version>
+    <mysql.version>5.1.13</mysql.version>
+  </properties>
+\end{lstlisting}
+
+\subsubsection*{1.4.6 Add the Maven Plugin Repositories}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true
+]
+  <pluginRepositories>
+    <pluginRepository> 
+      <id>kuali.nexus</id> 
+      <name>Nexus Repository Manager</name> 
+      <url>http://nexus.kuali.org/content/groups/public</url> 
+      <releases> 
+        <enabled>true</enabled> 
+      </releases> 
+      <snapshots> 
+        <enabled>true</enabled> 
+      </snapshots> 
+    </pluginRepository>
+  </pluginRepositories> 
+\end{lstlisting}
+
+\subsubsection*{1.4.6 Install rice-web.jar}
+\includegraphics[width=\textwidth]{images/Screenshot6.png}
+The above is what happens at this point if you try and install. The
+rice-web.jar dependency cannot be fulfilled because it does not
+exist. We need to create it.
+
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
+  commands},frame=single,breaklines=true
+]
+cd /home/rice/workspace/rice-src/web
+mvn -Dmaven.test.skip=true install
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
+  commans},frame=single,breaklines=true
+]
+mvn jar:jar
+\end{lstlisting}
+\includegraphics[width=\textwidth]{images/Screenshot7.png}
+
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
+  commands},frame=single,breaklines=true
+]
+mvn install:install-file -DgroupId=org.kuali.rice
+-DartifactId=rice-web -Dversion=1.0.3.2 -Dpackaging=jar -Dfile=target/rice-web-1.0.3.2.jar
+\end{lstlisting}
+
+\subsubsection*{1.4.7 Go}
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
+  commands},frame=single,breaklines=true
+]
+cd /home/rice/workspace/rice-src/training
+mvn -Dmaven.test.skip=true war:inplace
+mvn -Dmaven.test.skip=true tomcat:run
+\end{lstlisting}
 
 \subsection*{1.5 Add a Base Package}
-%% eclipse screenshot here
+In Eclipse:
+\begin{enumerate}
+  \item Click your right mouse button on the java folder. A context menu will appear.
+  \item Go to \textbf{New} $\rightarrow$ \textbf{Package}
+  \item A dialog will appear\\
+    \includegraphics[width=\textwidth]{images/Screenshot9.png}
+  \item For Name, use \textbf{training}
+  \item Click Finish
+  \end{enumerate}
 
 \subsection*{1.6 Create Base Spring Beans}
 \subsubsection*{1.6.1 Stub out
@@ -174,9 +435,22 @@ Create a new directory in \emph{rice-src} called \emph{training}
 </descriptor>
 \end{lstlisting}
 
-\subsection*{1.8 Stub Module struts-config.xml}
+\addcontentsline{toc}{subsection}{Build It}
+\subsection*{1.8 Build it}
+\subsubsection*{1.8.1 Open a Shell to the Project Directory}
+\begin{lstlisting}[basicstyle=\scriptsize,language=bash,backgroundcolor=\color{ubergray},caption={Change
+  directory to the project in Linux},frame=single,breaklines=true]
+cd workspace/rice-src/training
+\end{lstlisting}
+In Eclipse, Refresh your project.
 
-\subsection*{1.9 Add struts-config.xml to Rice Project web.xml}
+\subsubsection*{1.8.2 Use Maven to Build}
+\begin{lstlisting}[basicstyle=\scriptsize,language=bash,backgroundcolor=\color{ubergray},caption={Maven
+  Execution},frame=single,breaklines=true]
+mvn -Dmaven.test.skip=true package
+
+\end{lstlisting}
+
 
 \addcontentsline{toc}{subsection}{Creating a Custom Data Dictionary Control}
 \subsection*{2 Creating a Custom Data Dictionary Control}
@@ -189,7 +463,7 @@ attributes.
 The core DataDictionary classes are located in
 \emph{impl/src/main/java/org/kuali/rice/kns/datadictionary/} of your
 rice source code distribution.
-%% Show eclipse screenshot here
+\includegraphics[width=\textwidth]{images/Screenshot-Java - Eclipse .png}
 
 \subsubsection*{2.1 Add a datadictionary Package to Our Module}
 %% Add an eclipse screenshot
@@ -198,6 +472,8 @@ rice source code distribution.
     users},frame=single,breaklines=true]
   mkdir -p training/src/main/java/training/datadictionary/control
 \end{lstlisting}
+
+\emph{In Eclipse, Refresh your project.}
 
 \subsubsection*{2.2 Stub SuggestsBox Control in src/main/java/training/datadictionary/control}
 \begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=xml,backgroundcolor=\color{ubergray},caption={Stubbed
@@ -330,7 +606,7 @@ name) {
 Using the same examples above, add a call to \emph{hasPermission} that
 you can use to restrict a tab in the portal specifically for FO's.
 
-\addcontentsline{toc}{subsection}{Creating a Custom JSTL Function}
+\addcontentsline{toc}{subsection}{Adding to JstlConstantsInitListener}
 \subsection*{3 Adding to JstlConstantsInitListener}
 JstlConstantsInitListener can be found in
 \emph{impl/src/main/java/org/kuali/rice/kns/web/listener/JstlConstantsInitListener.java}
@@ -412,6 +688,7 @@ In it, you will see a section with listeners that looks like:
 Just add yours. Now when your application starts, you will be able to
 access your constants from the JSP/JSTL.
 
+\addcontentsline{toc}{section}{Exercise 2: Portal Customization}
 {\setlength{\baselineskip}%
   {0.0\baselineskip}
   \section*{\flushright Exercise 2\\Portal Customization}
@@ -419,6 +696,12 @@ access your constants from the JSP/JSTL.
 
 \addcontentsline{toc}{subsection}{Description}
 \subsection*{Description}
+Besides a middleware framework and API, Rice supplies a reference
+implementation portal with administrative focused user
+interfaces. Most institutions will want to customize this to fit their
+users and their functional needs. That will involve some modification
+at just about any level. This exercise explores advanced techniques
+for portal customization
 
 \addcontentsline{toc}{subsection}{Goals}
 \subsection*{Goals}
@@ -428,10 +711,10 @@ access your constants from the JSP/JSTL.
     design to the Kuali Portal
 \end{itemize}
 
-\addcontentsline{toc}{subsection}{Goals}
+\addcontentsline{toc}{subsection}{1 Add a new Tab Restricted by Permission}
 \subsection*{1 Add a New Tab Restricted by Permission}
 
-\addcontentsline{toc}{subsection}{Goals}
+\addcontentsline{toc}{subsection}{2 Add Fancy Tooltips to Channel Content}
 \subsection*{2 Add Tooltips to Channels}
 
 \newpage

@@ -22,10 +22,10 @@
 \fancyhead[OR]{\includegraphics[height=26pt]{heading.eps}}% 
 \fancyhead[ER]{\sectionmark}
 \fancyhead[EL]{\includegraphics[height=26pt]{heading.eps}}% 
+\includeonly{Exercises-Day1}
 
 \begin{document}
 \maketitle
-\tableofcontents
 
 \addcontentsline{toc}{part}{Preface}
 \part*{Preface}
@@ -34,17 +34,16 @@
 \section*{Copyright}
 \addcontentsline{toc}{subsection}{Copyright Holder}
 \subsection*{Copyright Holder}
-\copyright
+\copyright Copyright 2011, 2012
 Leo Przybylski
-2450 N. Palo Hacha
-Tucson, AZ 85745
+leo@rsmart.com
 
 \addcontentsline{toc}{subsection}{Disclaimer}
 \subsection*{Disclaimer}
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 United States License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/us/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 
 \addcontentsline{toc}{section}{About the Author}
-\section*{About the Author}
+\section*{About the Trainer}
 
 \addcontentsline{toc}{section}{Using these Exercises}
 \section*{Using these Exercises}
@@ -52,11 +51,12 @@ This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unit
 \addcontentsline{toc}{subsection}{Training Overview}
 \section*{Training Overview}
 
-\input{Exercises-Day1.tex}
+\tableofcontents
 
-\input{Exercises-Day2.tex}
-\input{Exercises-Day3.tex}
-\input{Exercises-Day4.tex}
-\input{Exercises-Day5.tex}
+\include{Exercises-Day1}
+\include{Exercises-Day2}
+\include{Exercises-Day3}
+\include{Exercises-Day4}
+\include{Exercises-Day5}
 
 \end{document}
