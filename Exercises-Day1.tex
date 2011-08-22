@@ -320,25 +320,16 @@ mvn install:install-file -DgroupId=org.kuali.rice
 -DartifactId=rice-web -Dversion=1.0.3.2 -Dpackaging=jar -Dfile=target/rice-web-1.0.3.2.jar
 \end{lstlisting}
 
-\subsubsection*{1.4.7 Go}
-\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
-  commands},frame=single,breaklines=true
-]
-cd /home/rice/workspace/rice-src/training
-mvn -Dmaven.test.skip=true war:inplace
-mvn -Dmaven.test.skip=true tomcat:run
-\end{lstlisting}
-
 \subsection*{1.5 Add a Base Package}
 In Eclipse:
 \begin{enumerate}
-  \item Click your right mouse button on the java folder. A context menu will appear.
-  \item Go to \textbf{New} $\rightarrow$ \textbf{Package}
-  \item A dialog will appear\\
-    \includegraphics[width=\textwidth]{images/Screenshot9.png}
-  \item For Name, use \textbf{training}
-  \item Click Finish
-  \end{enumerate}
+\item Click your right mouse button on the java folder. A context menu will appear.
+\item Go to \textbf{New} $\rightarrow$ \textbf{Package}
+\item A dialog will appear\\
+  \includegraphics[width=\textwidth]{images/Screenshot9.png}
+\item For Name, use \textbf{training}
+\item Click Finish
+\end{enumerate}
 
 \subsection*{1.6 Create Base Spring Beans}
 \subsubsection*{1.6.1 Stub out
@@ -444,12 +435,21 @@ cd workspace/rice-src/training
 \end{lstlisting}
 In Eclipse, Refresh your project.
 
-\subsubsection*{1.8.2 Use Maven to Build}
-\begin{lstlisting}[basicstyle=\scriptsize,language=bash,backgroundcolor=\color{ubergray},caption={Maven
-  Execution},frame=single,breaklines=true]
-mvn -Dmaven.test.skip=true package
-
+\subsubsection*{1.8.2 Go}
+\begin{lstlisting}[language=bash,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Maven
+  commands},frame=single,breaklines=true
+]
+cd /home/rice/workspace/rice-src/training
+mvn -Dmaven.test.skip=true war:inplace
+mvn -Dmaven.test.skip=true tomcat:run
 \end{lstlisting}
+
+\includegraphics[width=\textwidth]{images/Screenshot10.png}
+You should see the above after starting tomcat
+
+\includegraphics[width=\textwidth]{images/Screenshot11.png}
+Browse to http://localhost:8080/rice-dev/. Then login as
+quickstart. You should see the above.
 
 
 \addcontentsline{toc}{subsection}{Creating a Custom Data Dictionary Control}
