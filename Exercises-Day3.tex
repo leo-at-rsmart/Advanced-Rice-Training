@@ -265,7 +265,21 @@ Add the LDAP Module to a Rice project and customize the mappers.
 This will turn the LDAP Integration on and configure the connection.
 \end{enumerate}
 
-\subsubsection*{1.1}
+\subsubsection*{1.2 Configure System Parameters}
+\emph{These system parameters are so vital, that the application will fail
+in most instances when not configured properly}
+\begin{description}
+\item [KIM\_TO\_LDAP\_FIELD\_MAPPINGS] Many different lookup for
+  entities storied in LDAP can exist and they are not constrained to
+  field name consistency. This means the field names can vary. In the
+  event that field names do vary, then there cannot be a one-to-one
+  mapping between KIM objects and LDAP objects. Instead, we have to
+  have redundant mappings. This system parameter allows us to do just that.
+
+\begin{lstlisting}[language=sql,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={trnapp-config.xml},frame=single,breaklines=true]
+entityId=uid;principalId=uid;principalName=eduPersonPrincipalName;givenName=sn;principals.principalName=eduPersonPrincipalName;persons.principalName=eduPersonPrincipalName;principals.principalId=uid;principals.active=employeeStatus;lastName=sn;firstName=givenName;employmentInformation.employeeStatus=employeeStatus;employmentInformation.employeeId=emplId,facultyId;names.lastName=sn;names.firstName=givenName;employmentInformation.employeeStatusCode=employeeStatus;
+\end{lstlisting}
+\end{description}
 
 \addcontentsline{toc}{subsection}{Use Case for Adding Caching}
 \subsection*{2 Use Case for Adding Caching}
