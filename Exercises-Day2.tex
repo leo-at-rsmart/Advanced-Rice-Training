@@ -301,7 +301,7 @@ role, we need to tell Workflow to use it.
 \addcontentsline{toc}{subsection}{3 Complex Split Nodes}
 \subsection*{3 Complex Split Nodes}
 
-\subsection*{3.1 Modify the Existing ImportedBookOrderDocumentType.xml}
+\subsubsection*{3.1 Modify the Existing ImportedBookOrderDocumentType.xml}
 
 Now we edit the \textbf{ImportBookOrderDocumentType.xml} and add the
 following \textbf{routePath} and \textbf{routeNode} information.
@@ -339,7 +339,7 @@ following \textbf{routePath} and \textbf{routeNode} information.
          </routeNodes>
 \end{lstlisting}
 
-\subsection*{3.2 Modify the ImportedBookOrderDocument.java}
+\subsubsection*{3.2 Modify the ImportedBookOrderDocument.java}
 The following \textbf{answerSplitNodeQuestion()} method must be overridden in the \textbf{ImportedBookOrderDocument}
 \begin{lstlisting}[numbers=left,language=java,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={New
   KIM Type},frame=single,breaklines=true]
@@ -362,6 +362,28 @@ The following \textbf{answerSplitNodeQuestion()} method must be overridden in th
     }
 \end{lstlisting}
 
+\addcontentsline{toc}{subsection}{4 Adding Users to the Customs Derived Role}
+\subsection*{4 Adding Users to the Customs Derived Role}
+\subsubsection*{4.1 Look up a Person and Add Set the
+  primaryDepartmentCode to CUSTOMS}
+\begin{enumerate}
+  \item Browse the application at
+    \verb|http://localhost:8080/trnapp-dev/portal.do|
+  \item Backdoor login as \textbf{admin}
+  \item Click on the Administration Tab
+  \item Go to the Person Lookup 
+  \item Search for \textbf{user1} principalName
+  \item Click the \textbf{edit} link
+  \item Add an \textbf{Affiliation} of type \textbf{STAFF}
+  \item Add employment information. Set the
+    \textbf{primaryDepartmentCode} to \textbf{CUSTOMS}
+\end{enumerate}
+
+
+\addcontentsline{toc}{subsection}{5 Create and Route a New Imported Book Order Document}
+\subsection*{5 Create and Route a New Imported Book Order Document}
+\subsubsection*{5.1 Test the case of creating a book order with 2
+  entries}
 
 \newpage
   {\setlength{\baselineskip}%
