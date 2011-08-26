@@ -75,6 +75,39 @@ out. The behavior should be the same for the
 \textbf{ImportedBookOrderDocument} as for the
 \textbf{BookOrderDocument} to \emph{Fiscal Approval}.
 
+\subsubsection*{1.5 Create a new ImportedBookOrderDocument.xml
+  DataDictionary Entry}
+We also need to create a DataDictionary entry for the new
+\textbf{ImportedBookOrderDocument}.
+\begin{enumerate}
+  \item Edit
+    \textbf{src/main/resources/train/bookstore/document/datadictionary/ImportedBookOrderDocument.xml}
+  \item Create a bean that inherits from the
+    \textbf{BookOrderDocument}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocument.xml},frame=single,breaklines=true]
+  <bean id="ImportedBookOrderDocument-parentBean" abstract="true" parent="BookOrderDocument-parentBean">
+	<property name="documentTypeName" value="ImportedBookOrderDocumentType"/>
+	<property name="documentClass"
+    value="train.bookstore.document.ImportedBookOrderDocument"/>
+  \end{lstlisting}
+\end{enumerate}
+
+The final data dictionary entry looks like:
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocument.xml},frame=single,breaklines=true]
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans     	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd     	http://rice.kuali.org/dd     	http://rice.kuali.org/dd/dd.xsd">
+
+
+  <bean id="ImportedBookOrderDocument" parent="ImportedBookOrderDocument-parentBean"/>
+
+  <bean id="ImportedBookOrderDocument-parentBean" abstract="true" parent="BookOrderDocument-parentBean">
+	<property name="documentTypeName" value="ImportedBookOrderDocumentType"/>
+	<property name="documentClass"
+    value="train.bookstore.document.ImportedBookOrderDocument"/>
+</beans>
+\end{lstlisting}
+
+
 \addcontentsline{toc}{subsection}{2 Complex Role-Based Routing}
 \subsection*{2 Role-Based Routing}
 For imported books, they will need to first go through Customs.
@@ -83,21 +116,17 @@ For imported books, they will need to first go through Customs.
 To do this we will need a KIM Type. We will make the KIM Type first
 and then the role.
 \subsubsection*{2.1.1 Stub a CustomsDerivedRoleTypeServiceImpl class}
+Add the following class to \textbf{train.bookstore.identity.service.impl}
 \begin{lstlisting}[numbers=left,language=java,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={Stubbed
   CustomsDerivedRoleTypeServiceImpl.java},frame=single,breaklines=true]
 public class CustomsDerivedRoleTypeServiceImpl extends KimDerivedRoleTypeServiceBase {
-    {
-        requiredAttributes.add(KimAttributes.DOCUMENT_NUMBER);
-    }
-
     /**
      * 
      * @see org.kuali.rice.kim.service.support.impl.KimRoleTypeServiceBase#getPrincipalIdsFromApplicationRole(java.lang.String, java.lang.String, org.kuali.rice.kim.bo.types.dto.AttributeSet)
      */
     @Override
     public List<RoleMembershipInfo> getRoleMembersFromApplicationRole(String namespaceCode, String roleName, AttributeSet qualification) {
-        final List<RoleMembershipInfo> members = new
-        ArrayList<RoleMembershipInfo>();
+        final List<RoleMembershipInfo> members = new ArrayList<RoleMembershipInfo>();
         return members
     }
 }
@@ -114,12 +143,12 @@ of KIM and the \textbf{PersonService} to do this.
 
     private PersonService personService;
 
-    public void setDocumentService(DocumentService documentService) {
-        this.documentService = documentService;
+    public void setPersonService(final PersonService personService) {
+        this.personService = personService;
     }
 
-    protected DocumentService getDocumentService() {
-        return documentService;
+    protected PersonService getPersonService() {
+        return personService;
     }
 \end{lstlisting}
 
@@ -206,8 +235,18 @@ SYSDATE());
 \end{lstlisting}
 
 \subsection*{2.2 Create a Customs Responsibilty and Assign it}
-
 \subsubsection*{2.2.1 New Customs Responsibilty}
+\begin{enumerate}
+  \item Browse the application at
+    \verb|http://localhost:8080/trnapp-dev/portal.do|
+  \item Click on the \textbf{Administration} tab
+  \item Click on the \textbf{Responsibility} lookup link
+  \item Click on \textbf{create new}
+    
+    \includegraphics[width=\textwidth]{images/Screenshot21.png}
+
+    \includegraphics[width=\textwidth]{images/Screenshot22.png}
+\end{enumerate}
 
 \subsubsection*{2.2.2 Assign Customs Responsibility to the Customs Role}
 
@@ -219,10 +258,45 @@ role, we need to tell Workflow to use it.
 
 \begin{enumerate}
   \item Edit the \textbf{ImportedBookOrderDocumentType.xml}
-  \item Add a \textbf{routeNode}
   \item Add a \textbf{routePath}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocument.xml},frame=single,breaklines=true]
+   		 <routePaths>
+   			 <routePath>
+   				 <start name="AdHoc" nextNode="Warehouse Processing" />
+   				 <role name="Warehouse Processing" nextNode="Customs" />
+   				 <role name="Customs" />
+   			 </routePath>
+   		 </routePaths>
+\end{lstlisting}
+\item Add a \textbf{routeNode}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocument.xml},frame=single,breaklines=true]
+   		 <routeNodes>
+   			 <start name="AdHoc" />
+   			 <requests name="Warehouse Processing">
+   				 <activationType>P</activationType>
+   				 <ruleTemplate>WarehouseProcessingTemplate</ruleTemplate>
+   			 </requests>
+   			 <role name="Customs">
+   				 <type>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver</type>
+   			 </role>
+   		 </routeNodes>
+\end{lstlisting}
 \end{enumerate}
 
+\subsection*{2.5 Update the ImportedBookOrderDocument.xml}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocument.xml},frame=single,breaklines=true]
+	<bean
+		id="DocumentValuePathGroup-ImportedBookOrderDocument-RequiresCustoms-bookOrderEntries"
+		parent="org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver">
+		<property name="documentCollectionPath">
+			<bean class="org.kuali.rice.kns.datadictionary.DocumentCollectionPath">
+				<property name="collectionPath"
+                value="bookOrderEntries" />
+            </bean>
+        </property>
+     </bean>
+
+\end{lstlisting}
 
 \addcontentsline{toc}{subsection}{3 Complex Split Nodes}
 \subsection*{3 Complex Split Nodes}
@@ -233,25 +307,36 @@ Now we edit the \textbf{ImportBookOrderDocumentType.xml} and add the
 following \textbf{routePath} and \textbf{routeNode} information.
 \begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={ImportBookOrderDocumentType.xml},frame=single,breaklines=true]
  <routePaths>
-    <routePath>
-      <split name="RequiresCustoms">
-        <branch name="False">
-          <role name="Warehouse Processing"/>
-        </branch>
-        <branch name="True">
-          <role name="Customs" />
-        </branch>
-      </split>
-    </routePath>
+   			 <routePath>
+   				 <start name="AdHoc" nextNode="Warehouse Processing" />
+   				 <split name="RequiresCustoms"> 
+                     <branch name="False">  
+                     </branch> 
+                     <branch name="True">
+     				     <role name="Warehouse Processing" nextNode="Customs" />
+     				     <role name="Customs" />
+   				     </branch> 
+                     <join name="JoinRequiresCustoms" /> 
+                 </split>
+   			 </routePath>
   </routePaths>
-  <routeNodes>
-    <start name="AdHoc" />
-    <split name="RequiresCustoms">
-      <type>
-        org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
-      </type>
-    </split>
-  </routeNodes>
+   		 <routeNodes>
+   			 <start name="AdHoc" />
+   			 <split name="RequiresCustoms">
+   				 <type>
+   					 org.kuali.rice.kew.actions.SimpleBooleanSplitNode
+   				 </type>
+   			 </split>
+   			 <requests name="Warehouse Processing">
+   				 <activationType>P</activationType>
+   				 <ruleTemplate>WarehouseProcessingTemplate</ruleTemplate>
+   			 </requests>
+   			 <join name="JoinRequiresCustoms" />
+   			 <role name="Customs">
+   				 <type>org.kuali.rice.kns.workflow.attribute.DataDictionaryQualifierResolver
+   				 </type>
+   			 </role>
+         </routeNodes>
 \end{lstlisting}
 
 \subsection*{3.2 Modify the ImportedBookOrderDocument.java}
@@ -264,7 +349,12 @@ The following \textbf{answerSplitNodeQuestion()} method must be overridden in th
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if ("RequiresCustoms".equals(nodeName)) {
-          return (
+            if (getBookOrderEntries().size() > 1) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         throw new UnsupportedOperationException("No split node logic
         defined for split node "+nodeName+" on the Imported Book Order

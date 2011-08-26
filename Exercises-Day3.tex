@@ -274,11 +274,24 @@ in most instances when not configured properly}
   field name consistency. This means the field names can vary. In the
   event that field names do vary, then there cannot be a one-to-one
   mapping between KIM objects and LDAP objects. Instead, we have to
-  have redundant mappings. This system parameter allows us to do just that.
+  have redundant mappings. This system parameter allows us to do just
+  that.
+
+When creating the System Parameters, use the following 
 
 \begin{lstlisting}[language=sql,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={trnapp-config.xml},frame=single,breaklines=true]
 entityId=uid;principalId=uid;principalName=eduPersonPrincipalName;givenName=sn;principals.principalName=eduPersonPrincipalName;persons.principalName=eduPersonPrincipalName;principals.principalId=uid;principals.active=employeeStatus;lastName=sn;firstName=givenName;employmentInformation.employeeStatus=employeeStatus;employmentInformation.employeeId=emplId,facultyId;names.lastName=sn;names.firstName=givenName;employmentInformation.employeeStatusCode=employeeStatus;
 \end{lstlisting}
+
+\item [KIM\_TO\_LDAP\_VALUE\_MAPPINGS] map possible values in the
+  lookup form the results from an LDAP query. For example, employee
+  active/inactive types have Y, N, and Both values. Each value needs
+  to be mapped to a result from the LDAP query results.
+
+\begin{lstlisting}[language=sql,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={trnapp-config.xml},frame=single,breaklines=true]
+principals.active.Y=T;principals.active.N=!T;
+\end{lstlisting}
+
 \end{description}
 
 \addcontentsline{toc}{subsection}{Use Case for Adding Caching}
