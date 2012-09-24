@@ -133,7 +133,7 @@ In Eclipse:
   <parent>
     <groupId>org.kuali.rice</groupId>
     <artifactId>rice</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.3.3</version>
   </parent>
   <artifactId>training</artifactId>
   <packaging>war</packaging>
@@ -223,45 +223,41 @@ In Eclipse:
 
 \subsubsection*{1.4.3 Add the Tomcat Maven Plugin}
 \begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>tomcat-maven-plugin</artifactId>
-        <!-- tomcat 6.0.26 -->
-        <version>1.0</version>
-        <configuration>
-          <path>\$\{default.context.path\}</path>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>\$\{mysql.version\}</version>
-            <scope>runtime</scope>
-          </dependency>
-        </dependencies>
-      </plugin>
+        <plugin>
+          <groupId>org.apache.tomcat.maven</groupId>
+          <artifactId>tomcat7-maven-plugin</artifactId>
+          <version>${tomcat7-maven-plugin.version}</version>
+            <dependencies>
+                <dependency>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                    <version>${log4j.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${driver.groupId}</groupId>
+                    <artifactId>${driver.artifactId}</artifactId>
+                    <version>${driver.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </plugin>
 \end{lstlisting}
 
 \subsubsection*{1.4.4 Add the Jetty Maven Plugin}
 \begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true]
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty.version}</version>
-        <configuration>
-          <webAppConfig>
-            <contextPath>${default.context.path}</contextPath>
-          </webAppConfig>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>\$\{mysql.version\}</version>
-            <scope>runtime</scope>
-          </dependency>
-        </dependencies>
-      </plugin>					
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+          <version>${jetty.version}</version>
+            <dependencies>
+                <dependency>
+                    <groupId>${driver.groupId}</groupId>
+                    <artifactId>${driver.artifactId}</artifactId>
+                    <version>${driver.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </plugin>
 \end{lstlisting}
 
 \subsubsection*{1.4.5 Add the Maven Properties}
@@ -271,11 +267,31 @@ In Eclipse:
     <build.environment>dev</build.environment>
     <default.context.path>/\$\{project.artifactId\}--\${build.environment\}</default.context.path>
     <jetty.plugin.version>7.4.5.v20110725</jetty.plugin.version>
-    <mysql.version>5.1.13</mysql.version>
+    <mysql-connector-java.version>5.1.16</mysql-connector-java.version>
+    <jetty.version>8.1.5.v20120716</jetty.version>
+    <tomcat7-maven-plugin.version>2.0-beta-1</tomcat7-maven-plugin.version>
   </properties>
 \end{lstlisting}
 
-\subsubsection*{1.4.6 Add the Maven Plugin Repositories}
+\subsubsection*{1.4.6 Add the Maven Profiles}
+\begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true
+]
+  <profiles>
+   <profile>
+     <id>mysql</id>
+     <activation>
+        <activeByDefault>true</activeByDefault>
+     </activation>
+     <properties>
+         <driver.groupId>mysql</driver.groupId>
+         <driver.artifactId>mysql-connector-java</driver.artifactId>
+         <driver.version>${mysql-connector-java.version}</driver.version>
+     </properties>
+   </profile>
+  </profiles>
+\end{lstlisting}
+
+\subsubsection*{1.4.7 Add the Maven Plugin Repositories}
 \begin{lstlisting}[numbers=left,language=xml,basicstyle=\scriptsize,backgroundcolor=\color{ubergray},caption={training/pom.xml},frame=single,breaklines=true
 ]
   <pluginRepositories>
