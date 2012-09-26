@@ -562,6 +562,12 @@ public final static boolean isEnabled(final String component, final String
 name) {
     return getParameterService().getIndicatorParameter("KR-TRN", component, name);
 }
+
+public final static boolean isPermitted(final String permissionName) {
+    return
+    getPermissionService().hasPermission(GlobalVariables.getUserSession().getPrincipalId(),
+    "KR-TRN", permissionName, null);
+}
 \end{lstlisting}
 
 \subsubsection*{3.3 Stub a Tag Library Definition for the Module}
@@ -603,10 +609,10 @@ name) {
 
     <function>
         <description>Access System Parameters from JSTL</description>
-        <name>getParameters</name>
+        <name>getParameter</name>
         <function-class>training.web.TrainingFunctions</function-class>
-        <function-signature>java.util.List getParameters(java.lang.String, java.lang.String)</function-signature>
-        <example>${trn-fn:getParameters('Document', 'ACTIVE_FILE_TYPES')}</example>
+        <function-signature>java.lang.String getParameter(java.lang.String, java.lang.String)</function-signature>
+        <example>${trn-fn:getParameter('Document', 'ACTIVE_FILE_TYPES')}</example>
     </function>
 
     <function>
@@ -615,6 +621,14 @@ name) {
         <function-class>training.web.TrainingFunctions</function-class>
         <function-signature>boolean isEnabled(java.lang.String, java.lang.String)</function-signature>
         <example>${trn-fn:isEnabled('Document', 'ALLOW_NEGATIVE_BALANCE_IND')}</example>
+    </function>
+
+    <function>
+        <description>Is the User Allowed a Permission</description>
+        <name>isPermitted</name>
+        <function-class>training.web.TrainingFunctions</function-class>
+        <function-signature>boolean isPermitted(java.lang.String, java.lang.String)</function-signature>
+        <example>${trn-fn:isPermitted('View Training Tab')}</example>
     </function>
 \end{lstlisting}
 
@@ -730,8 +744,121 @@ for portal customization
 \addcontentsline{toc}{subsection}{1 Add a new Tab Restricted by Permission}
 \subsection*{1 Add a New Tab Restricted by Permission}
 
+\subsection*{1.1 Create a Training Tab}
+In \textbf{web/src/main/webapp/WEB-INF/tags/rice-portal/}, create a
+file called \textbf{trainingTab.tag} with the following
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=xml,backgroundcolor=\color{ubergray},caption={web/src/main/webapp/WEB-INF/tags/rice-portal/trainingTab.tag},frame=single,breaklines=true]
+<%--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+--%>
+<%@ include file="/rice-portal/jsp/sys/riceTldHeader.jsp"%>
+
+
+<td class="content" valign="top">      
+      <trainingChannel:training />
+</td>
+
+\end{lstlisting}
+
+\subsubsection*{1.2 Create a Training Channel}
+Create the directory
+\textbf{web/src/main/webapp/WEB-INF/tags/rice-portal/channel/training/}. Then
+add the following \textbf{training.tag} to it.
+
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=xml,backgroundcolor=\color{ubergray},caption={web/src/main/webapp/WEB-INF/tags/rice-portal/trainingTab.tag},frame=single,breaklines=true]
+<%--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+--%>
+<%@ include file="/rice-portal/jsp/sys/riceTldHeader.jsp"%>
+
+<channel:portalChannelTop channelTitle="Training" />
+<div class="body">
+	
+   	<ul class="chan">
+		<li><portal:portalLink displayTitle="true" title="Rule Attribute" url="${ConfigProperties.kr.url}/lookup.do?businessObjectClassName=org.kuali.rice.kew.rule.bo.RuleAttribute&docFormKey=88888888&returnLocation=${ConfigProperties.application.url}/portal.do&hideReturnLink=true" /></li>
+	</ul>
+
+</div>
+<channel:portalChannelBottom />
+\end{lstlisting}
+
+\subsubsection{1.3 Add to training.tag usage for isPermitted}
+
 \addcontentsline{toc}{subsection}{2 Add Fancy Tooltips to Channel Content}
 \subsection*{2 Add Tooltips to Channels}
+
+\subsubsection*{2.1 Include Bootstrap}
+Add the following to the \textbf{src/main/webapp/kr/WEB-INF/jsp/tldHeader.jsp}
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=xml,backgroundcolor=\color{ubergray},caption={web/src/main/webapp/WEB-INF/tags/rice-portal/trainingTab.tag},frame=single,breaklines=true]
+  <link href="${ConfigurationProperties.application.url}/kr/css/bootstrap.css" rel="stylesheet">
+    <link href="${ConfigurationProperties.application.url}/kr/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="${ConfigurationProperties.application.url}/kr/scripts/google-code-prettify/prettify.css"
+    rel="stylesheet">
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/jquery.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/google-code-prettify/prettify.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-transition.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-alert.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-modal.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-dropdown.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-scrollspy.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-tab.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-tooltip.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-popover.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-button.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-collapse.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-carousel.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-typeahead.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/bootstrap-affix.js"></script>
+    <script src=""${ConfigurationProperties.application.url}/kr/scripts/application.js"></script>
+\end{lstlisting}
+
+\subsubsection*{2.1 Add Portal Link}
+Add the following to the \textbf{src/main/webapp/WEB-INF/tags/rice-portal/channel/training/training.tag}
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=xml,backgroundcolor=\color{ubergray},caption={web/src/main/webapp/WEB-INF/tags/rice-portal/trainingTab.tag},frame=single,breaklines=true]
+		<li id="popover1"><a href="#">Some Document</a></li>
+\end{lstlisting}
+
+
+\subsubsection*{2.3 Popover javascript and Fetch Help URL}
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=left,language=java,backgroundcolor=\color{ubergray},caption={web/src/main/webapp/WEB-INF/tags/rice-portal/trainingTab.tag},frame=single,breaklines=true]
+
+<script>
+$('#popover1').popover({ trigger : 'hover',
+                         content: function() {
+  var helpUrl = '${ConfigurationProperties.application.url}/kr/help.do?methodToCall=getDocumentHelpText&amp;documentTypeName=IdentityManagementPersonDocument'
+  var retval = ''  
+    $.get(sliderurl, function(data) {
+        retval = data;
+        return data;
+    })
+  return retval;
+}})
+</script>
+\end{lstlisting}
 
 \newpage
   {\setlength{\baselineskip}%
